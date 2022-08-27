@@ -23,4 +23,6 @@ Route::group([
 ], function () {
     Route::resource('customers', App\Http\Controllers\Api\V1\CustomerController::class);
     Route::resource('invoices', App\Http\Controllers\Api\V1\InvoiceController::class);
+    Route::resource('categories', App\Http\Controllers\Api\V1\CategoryController::class);
+    Route::resource('products', App\Http\Controllers\Api\V1\ProductController::class);
 });
