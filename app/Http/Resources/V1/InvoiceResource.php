@@ -22,8 +22,5 @@ class InvoiceResource extends JsonResource
             'billedAt' => $this->billed_at,
             'paidAt' => $this->paid_at,
         ];
-
-//        return parent::toArray($request);
-
     }
 }
