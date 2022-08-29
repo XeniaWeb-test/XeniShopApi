@@ -17,12 +17,12 @@ class CategorySeeder extends Seeder
     {
         Category::factory()
             ->count(3)
-            ->hasProducts(20)
+            ->hasProducts(12)
             ->create();
 
         Category::factory()
             ->count(2)
-            ->hasProducts(10)
+            ->hasProducts(8)
             ->create();
 
         Category::factory()
