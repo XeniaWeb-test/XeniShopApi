@@ -7,6 +7,8 @@ use App\Http\Requests\V1\StoreProductRequest;
 use App\Http\Requests\V1\UpdateProductRequest;
 use App\Http\Resources\V1\ProductResource;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
@@ -31,6 +33,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreProductRequest $request)
+//    public function store(Request $request)
     {
 // Example JSON for front:
 //        {
@@ -42,7 +45,14 @@ class ProductController extends Controller
 //            "comment": "New comment"
 //        }
 
+        $card = $request->file('image')->store('/', 'photos');
+        if (!$card) {
+            return response(['message' => 'Error file upload'], 500);
+        }
+
         $product = Product::create($request->input());
+//        // @todo - временный абсолютный путь для локали
+        $product->update(['image' => 'https://shop-api/storage/photos/' . $card]);
         return response(new ProductResource($product));
     }
 

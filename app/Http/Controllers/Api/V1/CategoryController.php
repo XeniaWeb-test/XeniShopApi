@@ -13,11 +13,16 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function index()
     {
-        return CategoryResource::collection(Category::all());
+        $categories = Category::all();
+
+        return response([
+            'cats' => CategoryResource::collection($categories),
+            'message' => 'Retrieved successfully',
+        ]);
     }
 
     /**
