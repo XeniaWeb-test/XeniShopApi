@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreCategoryRequest;
 use App\Http\Requests\V1\UpdateCategoryRequest;
+use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -15,12 +17,18 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $categories = Category::query();
+
+        $includeProducts = $request->query('includeProducts');
+
+        if ($includeProducts) {
+            $categories = $categories->with('products');
+        }
 
         return response([
-            'cats' => CategoryResource::collection($categories),
+            'cats' => new CategoryCollection($categories->get()),
             'message' => 'Retrieved successfully',
         ]);
     }

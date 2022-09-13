@@ -22,6 +22,7 @@ class ProductResource extends JsonResource
             'categoryId' => $this->category_id,
             'image' => $this->image,
             'comment' => $this->comment,
+            'category' => new CategoryResource($this->whenLoaded('category')),
         ];
     }
 }

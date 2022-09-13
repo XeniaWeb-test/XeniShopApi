@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Filters\V1\ProductFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreProductRequest;
 use App\Http\Requests\V1\UpdateProductRequest;
+use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -17,13 +19,33 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response([
-            'cards' => ProductResource::collection(Product::all()->sortDesc()),
-            'message' => 'Retrieved successfully',
-        ]);
+        $filter = new ProductFilter();
+        $queryItems = $filter->transform($request); // [['column','operator','value']]
 
+        /**
+         *  return new ProductCollection(Product::paginate(5)->sortDesc()); // Return {'data':... , 'links': ... , 'meta':...}
+         *  return ProductResource::collection(Product::paginate(20)->sortDesc()); // Return only 20 {'data':... } without links and meta
+         */
+
+        $includeCategory = $request->query('includeCategory');
+        $products = Product::where($queryItems);
+        if ($includeCategory) {
+            $products = $products->with('category');
+        }
+
+        if (count($queryItems) == 0) {
+            return response([
+                'cards' => new ProductCollection($products->get()->sortDesc()),
+                'message' => 'Retrieved successfully',
+            ]);
+        } else {
+            return response([
+                'cards' => new ProductCollection($products->get()->sortDesc()),
+                'message' => 'Retrieved successfully',
+            ]);
+        }
     }
 
     /**
@@ -58,7 +80,6 @@ class ProductController extends Controller
 
     /**
      * Display the specified resource.
-     *
      * @param \App\Models\Product $product
      * @return ProductResource
      */
